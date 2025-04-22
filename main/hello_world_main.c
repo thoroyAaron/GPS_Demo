@@ -12,23 +12,47 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include "mqtt_client.h"
 
-#define EXAMPLE_ESP_WIFI_SSID      "Sirius"
-#define EXAMPLE_ESP_WIFI_PASS      "12345678"
-#define EXAMPLE_ESP_MAXIMUM_RETRY  CONFIG_ESP_MAXIMUM_RETRY
 #define TCP_SERVER_IP   "192.168.17.130"
 #define TCP_SERVER_PORT 8080
 
+#define EXAMPLE_ESP_WIFI_SSID      "Sirius"
+#define EXAMPLE_ESP_WIFI_PASS      "12345678"
+#define EXAMPLE_ESP_MAXIMUM_RETRY  500
+
+// 添加默认定义
+#ifndef ESP_WIFI_SAE_MODE
+#define ESP_WIFI_SAE_MODE 0
+#endif
+
+// 确保EXAMPLE_H2E_IDENTIFIER始终有定义
+#ifndef EXAMPLE_H2E_IDENTIFIER
+#define EXAMPLE_H2E_IDENTIFIER ""
+#endif
+
 #if CONFIG_ESP_WPA3_SAE_PWE_HUNT_AND_PECK
+#undef ESP_WIFI_SAE_MODE  // 先取消之前的定义
+#undef EXAMPLE_H2E_IDENTIFIER
 #define ESP_WIFI_SAE_MODE WPA3_SAE_PWE_HUNT_AND_PECK
 #define EXAMPLE_H2E_IDENTIFIER ""
 #elif CONFIG_ESP_WPA3_SAE_PWE_HASH_TO_ELEMENT
+#undef ESP_WIFI_SAE_MODE
+#undef EXAMPLE_H2E_IDENTIFIER
 #define ESP_WIFI_SAE_MODE WPA3_SAE_PWE_HASH_TO_ELEMENT
 #define EXAMPLE_H2E_IDENTIFIER CONFIG_ESP_WIFI_PW_ID
 #elif CONFIG_ESP_WPA3_SAE_PWE_BOTH
+#undef ESP_WIFI_SAE_MODE
+#undef EXAMPLE_H2E_IDENTIFIER
 #define ESP_WIFI_SAE_MODE WPA3_SAE_PWE_BOTH
 #define EXAMPLE_H2E_IDENTIFIER CONFIG_ESP_WIFI_PW_ID
 #endif
+
+// 确保在条件分支结束后再次检查是否定义
+#ifndef EXAMPLE_H2E_IDENTIFIER
+#define EXAMPLE_H2E_IDENTIFIER ""
+#endif
+
 #if CONFIG_ESP_WIFI_AUTH_OPEN
 #define ESP_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_OPEN
 #elif CONFIG_ESP_WIFI_AUTH_WEP
@@ -45,6 +69,9 @@
 #define ESP_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_WPA2_WPA3_PSK
 #elif CONFIG_ESP_WIFI_AUTH_WAPI_PSK
 #define ESP_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_WAPI_PSK
+#else
+// 添加默认值，如果没有定义任何认证模式
+#define ESP_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_WPA2_PSK
 #endif
 
 /* FreeRTOS event group to signal when we are connected*/
@@ -84,7 +111,6 @@ static void event_handler(void* arg, esp_event_base_t event_base,
 }
 
 
-// TCP client task to send data to the server
 void tcp_client_send_task(void *pvParameters)
 {
     int count = 0;
@@ -130,7 +156,82 @@ void tcp_client_send_task(void *pvParameters)
         vTaskDelay(1000 / portTICK_PERIOD_MS); // 重连前延时
     }
 }
-//TCP Init Function
+
+#define ONENET_PRODUCT_ID    "739O2xo2cC"
+#define ONENET_DEVICE_NAME   "GPS_Demo"
+#define ONENET_DEVICE_KEY    "version=2018-10-31&res=products%2F739O2xo2cC%2Fdevices%2FGPS_Demo&et=2060824069&method=md5&sign=T%2Fofm%2FCiBouDP3Zvrprn0A%3D%3D"
+
+#define MQTT_BROKER_URI      "mqtt://mqtts.heclouds.com:1883"
+
+static esp_mqtt_client_handle_t mqtt_client = NULL;
+
+static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
+{
+    esp_mqtt_event_handle_t event = event_data;
+    switch (event->event_id) {
+        case MQTT_EVENT_CONNECTED:
+            ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
+            break;
+        case MQTT_EVENT_DISCONNECTED:
+            ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
+            break;
+        case MQTT_EVENT_PUBLISHED:
+            ESP_LOGI(TAG, "MQTT_EVENT_PUBLISHED, msg_id=%d", event->msg_id);
+            break;
+        case MQTT_EVENT_ERROR:
+            ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
+            if (event->error_handle) {
+                ESP_LOGE(TAG, "MQTT ERROR TYPE: %d", event->error_handle->error_type);
+                if (event->error_handle->error_type == MQTT_ERROR_TYPE_TCP_TRANSPORT) {
+                    ESP_LOGE(TAG, "Last error code reported from esp-tls: 0x%x", event->error_handle->esp_tls_last_esp_err);
+                    ESP_LOGE(TAG, "Last tls stack error number: 0x%x", event->error_handle->esp_tls_stack_err);
+                    ESP_LOGE(TAG, "Last captured errno : %d (%s)",  event->error_handle->esp_transport_sock_errno, strerror(event->error_handle->esp_transport_sock_errno));
+                }
+            }
+            ESP_LOGE(TAG, "MQTT publish failed, topic or payload may be invalid");
+            break;
+        default:
+            ESP_LOGI(TAG, "MQTT_EVENT id: %d", event->event_id);
+            break;
+    }
+}
+
+
+static void mqtt_app_start(void)
+{
+    ESP_LOGI(TAG, "Starting MQTT client with URI: %s", MQTT_BROKER_URI);
+    ESP_LOGI(TAG, "Client ID: %s, Username: %s", "GPS_Demo", "739O2xo2cC");
+    esp_mqtt_client_config_t mqtt_cfg = {
+        .broker.address.uri = MQTT_BROKER_URI,
+        .credentials.client_id = "GPS_Demo",
+        .credentials.username = "739O2xo2cC",
+        .credentials.authentication.password = ONENET_DEVICE_KEY,
+    };
+    mqtt_client = esp_mqtt_client_init(&mqtt_cfg);
+    esp_mqtt_client_register_event(mqtt_client, ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);
+    esp_mqtt_client_start(mqtt_client);
+}
+
+void mqtt_upload_task(void *pvParameters)
+{
+    int count = 0;
+    char topic[128];
+
+    while (1) {
+        char msg[128];
+        snprintf(topic, sizeof(topic), "$sys/%s/%s/thing/property/post", ONENET_PRODUCT_ID, ONENET_DEVICE_NAME);
+        // 修改JSON格式：将id从数字改为字符串，确保符合OneNet平台要求
+        snprintf(msg, sizeof(msg),"{\"id\":\"1\",\"version\":\"1.0\",\"params\":{\"temp\":{\"value\":%.1f}}}",21.1);
+        ESP_LOGI(TAG, "MQTT publish topic: %s, msg: %s", topic, msg);
+        if (mqtt_client) {
+            int msg_id = esp_mqtt_client_publish(mqtt_client, topic, msg, 0, 1, 0);
+            ESP_LOGI(TAG, "MQTT published, msg_id=%d", msg_id);
+        }
+        count++;
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
+}
+
 void wifi_init_sta(void)
 {
     s_wifi_event_group = xEventGroupCreate();
@@ -190,6 +291,8 @@ void wifi_init_sta(void)
         ESP_LOGI(TAG, "connected to ap SSID:%s password:%s",
                  EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS);
         xTaskCreate(tcp_client_send_task, "tcp_client_send_task", 4096, NULL, 5, NULL);
+        mqtt_app_start(); // 新增
+        xTaskCreate(mqtt_upload_task, "mqtt_upload_task", 4096, NULL, 5, NULL); // 新增
     } else if (bits & WIFI_FAIL_BIT) {
         ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s",
                  EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS);
@@ -200,6 +303,7 @@ void wifi_init_sta(void)
 
 void app_main(void)
 {
+    //Initialize NVS
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
       ESP_ERROR_CHECK(nvs_flash_erase());
@@ -208,6 +312,5 @@ void app_main(void)
     ESP_ERROR_CHECK(ret);
 
     wifi_init_sta();
-    
 }
 

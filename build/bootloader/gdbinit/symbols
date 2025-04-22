@@ -17,4 +17,4 @@ set confirm off
 set confirm on
 
 # Load application symbols
-file E:/Sofaware/Espressif/frameworks/esp-idf-v5.4.1/examples/get-started/hello_world/build/bootloader/bootloader.elf
+file E:/Code_document/ESP32_Code/GPS_Demo/build/bootloader/bootloader.elf

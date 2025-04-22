@@ -13,8 +13,8 @@ end
 
 # Load bootloader symbols
 set confirm off
-    add-symbol-file E:/Sofaware/Espressif/frameworks/esp-idf-v5.4.1/examples/get-started/hello_world/build/bootloader/bootloader.elf
+    add-symbol-file E:/Code_document/ESP32_Code/GPS_Demo/build/bootloader/bootloader.elf
 set confirm on
 
 # Load application symbols
-file E:/Sofaware/Espressif/frameworks/esp-idf-v5.4.1/examples/get-started/hello_world/build/hello_world.elf
+file E:/Code_document/ESP32_Code/GPS_Demo/build/GPS_Demo.elf

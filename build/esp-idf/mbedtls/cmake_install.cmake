@@ -2,7 +2,7 @@
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/hello_world")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/GPS_Demo")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -39,6 +39,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/Sofaware/Espressif/frameworks/esp-idf-v5.4.1/examples/get-started/hello_world/build/esp-idf/mbedtls/mbedtls/cmake_install.cmake")
+  include("E:/Code_document/ESP32_Code/GPS_Demo/build/esp-idf/mbedtls/mbedtls/cmake_install.cmake")
 endif()
 

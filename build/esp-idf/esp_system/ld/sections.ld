@@ -1,6 +1,6 @@
 /* Automatically generated file; DO NOT EDIT */
 /* Espressif IoT Development Framework Linker Script */
-/* Generated from: E:\Sofaware\Espressif\frameworks\esp-idf-v5.4.1\examples\get-started\hello_world\build\esp-idf\esp_system\ld\sections.ld.in */
+/* Generated from: E:\Code_document\ESP32_Code\GPS_Demo\build\esp-idf\esp_system\ld\sections.ld.in */
 
 /*
 

@@ -10,18 +10,18 @@ if(NOT EXISTS "E:/Sofaware/Espressif/frameworks/esp-idf-v5.4.1/components/bootlo
   file(MAKE_DIRECTORY "E:/Sofaware/Espressif/frameworks/esp-idf-v5.4.1/components/bootloader/subproject")
 endif()
 file(MAKE_DIRECTORY
-  "E:/Sofaware/Espressif/frameworks/esp-idf-v5.4.1/examples/get-started/hello_world/build/bootloader"
-  "E:/Sofaware/Espressif/frameworks/esp-idf-v5.4.1/examples/get-started/hello_world/build/bootloader-prefix"
-  "E:/Sofaware/Espressif/frameworks/esp-idf-v5.4.1/examples/get-started/hello_world/build/bootloader-prefix/tmp"
-  "E:/Sofaware/Espressif/frameworks/esp-idf-v5.4.1/examples/get-started/hello_world/build/bootloader-prefix/src/bootloader-stamp"
-  "E:/Sofaware/Espressif/frameworks/esp-idf-v5.4.1/examples/get-started/hello_world/build/bootloader-prefix/src"
-  "E:/Sofaware/Espressif/frameworks/esp-idf-v5.4.1/examples/get-started/hello_world/build/bootloader-prefix/src/bootloader-stamp"
+  "E:/Code_document/ESP32_Code/GPS_Demo/build/bootloader"
+  "E:/Code_document/ESP32_Code/GPS_Demo/build/bootloader-prefix"
+  "E:/Code_document/ESP32_Code/GPS_Demo/build/bootloader-prefix/tmp"
+  "E:/Code_document/ESP32_Code/GPS_Demo/build/bootloader-prefix/src/bootloader-stamp"
+  "E:/Code_document/ESP32_Code/GPS_Demo/build/bootloader-prefix/src"
+  "E:/Code_document/ESP32_Code/GPS_Demo/build/bootloader-prefix/src/bootloader-stamp"
 )
 
 set(configSubDirs )
 foreach(subDir IN LISTS configSubDirs)
-    file(MAKE_DIRECTORY "E:/Sofaware/Espressif/frameworks/esp-idf-v5.4.1/examples/get-started/hello_world/build/bootloader-prefix/src/bootloader-stamp/${subDir}")
+    file(MAKE_DIRECTORY "E:/Code_document/ESP32_Code/GPS_Demo/build/bootloader-prefix/src/bootloader-stamp/${subDir}")
 endforeach()
 if(cfgdir)
-  file(MAKE_DIRECTORY "E:/Sofaware/Espressif/frameworks/esp-idf-v5.4.1/examples/get-started/hello_world/build/bootloader-prefix/src/bootloader-stamp${cfgdir}") # cfgdir has leading slash
+  file(MAKE_DIRECTORY "E:/Code_document/ESP32_Code/GPS_Demo/build/bootloader-prefix/src/bootloader-stamp${cfgdir}") # cfgdir has leading slash
 endif()

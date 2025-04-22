@@ -318,7 +318,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_main_
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = E:\Sofaware\Espressif\tools\cmake\3.30.2\bin\cmake.exe --regenerate-during-build -SE:\Sofaware\Espressif\frameworks\esp-idf-v5.4.1\components\bootloader\subproject -BE:\Sofaware\Espressif\frameworks\esp-idf-v5.4.1\examples\get-started\hello_world\build\bootloader
+  command = E:\Sofaware\Espressif\tools\cmake\3.30.2\bin\cmake.exe --regenerate-during-build -SE:\Sofaware\Espressif\frameworks\esp-idf-v5.4.1\components\bootloader\subproject -BE:\Code_document\ESP32_Code\GPS_Demo\build\bootloader
   description = Re-running CMake...
   generator = 1
 

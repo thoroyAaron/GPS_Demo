@@ -1,4 +1,4 @@
-/* * Data converted from E:/Sofaware/Espressif/frameworks/esp-idf-v5.4.1/examples/get-started/hello_world/build/esp-idf/mbedtls/x509_crt_bundle
+/* * Data converted from E:/Code_document/ESP32_Code/GPS_Demo/build/esp-idf/mbedtls/x509_crt_bundle
  */
 .data
 #if !defined (__APPLE__) && !defined (__linux__)

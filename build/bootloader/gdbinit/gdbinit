@@ -1,2 +1,2 @@
-source E:/Sofaware/Espressif/frameworks/esp-idf-v5.4.1/examples/get-started/hello_world/build/bootloader/gdbinit/symbols
-source E:/Sofaware/Espressif/frameworks/esp-idf-v5.4.1/examples/get-started/hello_world/build/bootloader/gdbinit/connect
+source E:/Code_document/ESP32_Code/GPS_Demo/build/bootloader/gdbinit/symbols
+source E:/Code_document/ESP32_Code/GPS_Demo/build/bootloader/gdbinit/connect
