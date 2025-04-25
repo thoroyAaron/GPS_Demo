@@ -83,4 +83,8 @@ E:/Code_document/ESP32_Code/GPS_Demo/build/esp-idf/spiffs/libspiffs.a
 E:/Code_document/ESP32_Code/GPS_Demo/build/esp-idf/touch_element/libtouch_element.a
 E:/Code_document/ESP32_Code/GPS_Demo/build/esp-idf/usb/libusb.a
 E:/Code_document/ESP32_Code/GPS_Demo/build/esp-idf/wifi_provisioning/libwifi_provisioning.a
+E:/Code_document/ESP32_Code/GPS_Demo/build/esp-idf/gps_data/libgps_data.a
+E:/Code_document/ESP32_Code/GPS_Demo/build/esp-idf/uart_config/libuart_config.a
+E:/Code_document/ESP32_Code/GPS_Demo/build/esp-idf/mqtt_config/libmqtt_config.a
+E:/Code_document/ESP32_Code/GPS_Demo/build/esp-idf/wifi_config/libwifi_config.a
 E:/Code_document/ESP32_Code/GPS_Demo/build/esp-idf/main/libmain.a
