@@ -1,53 +1,63 @@
 | Supported Targets | ESP32 | ESP32-C2 | ESP32-C3 | ESP32-C5 | ESP32-C6 | ESP32-C61 | ESP32-H2 | ESP32-P4 | ESP32-S2 | ESP32-S3 | Linux |
 | ----------------- | ----- | -------- | -------- | -------- | -------- | --------- | -------- | -------- | -------- | -------- | ----- |
 
-# Hello World Example
+# ESP32 GPS数据采集项目
 
-Starts a FreeRTOS task to print "Hello World".
+本项目基于ESP32开发板实现GPS模块数据的采集、解析和远程传输功能。通过UART接口读取GPS模块数据，解析后通过MQTT协议将数据上传到云端服务器。
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+## 功能特点
 
-## How to use example
+- GPS数据采集：通过UART接口读取GPS模块NMEA数据
+- 数据解析：解析GPS模块输出的经纬度、时间、速度等信息
+- MQTT通信：支持将解析后的数据通过MQTT协议上传到云端
+- WiFi连接：支持配置WiFi连接参数，实现设备联网
 
-Follow detailed instructions provided specifically for this example.
+## 硬件要求
 
-Select the instructions depending on Espressif chip installed on your development board:
+- ESP32开发板
+- GPS模块（支持NMEA协议输出）
+- USB数据线
+- 5V电源供电
 
-- [ESP32 Getting Started Guide](https://docs.espressif.com/projects/esp-idf/en/stable/get-started/index.html)
-- [ESP32-S2 Getting Started Guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/get-started/index.html)
-
-
-## Example folder contents
-
-The project **hello_world** contains one source file in C language [hello_world_main.c](main/hello_world_main.c). The file is located in folder [main](main).
-
-ESP-IDF projects are built using CMake. The project build configuration is contained in `CMakeLists.txt` files that provide set of directives and instructions describing the project's source files and targets (executable, library, or both).
-
-Below is short explanation of remaining files in the project folder.
+## 项目结构
 
 ```
 ├── CMakeLists.txt
-├── pytest_hello_world.py      Python script used for automated testing
+├── components
+│   ├── gps_data          # GPS数据处理组件
+│   ├── mqtt_config       # MQTT配置组件
+│   ├── uart_config       # UART配置组件
+│   └── wifi_config       # WiFi配置组件
 ├── main
 │   ├── CMakeLists.txt
 │   └── hello_world_main.c
-└── README.md                  This is the file you are currently reading
+└── README.md
 ```
 
-For more information on structure and contents of ESP-IDF projects, please refer to Section [Build System](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/build-system.html) of the ESP-IDF Programming Guide.
+## 使用说明
 
-## Troubleshooting
+1. 硬件连接
+   - 将GPS模块的TX引脚连接到ESP32的RX引脚
+   - 将GPS模块的RX引脚连接到ESP32的TX引脚
+   - 连接GPS模块的电源和地线
 
-* Program upload failure
+2. 软件配置
+   - 配置WiFi连接参数（SSID和密码）
+   - 配置MQTT服务器参数（服务器地址、端口、主题等）
+   - 配置UART参数（波特率、数据位等）
 
-    * Hardware connection is not correct: run `idf.py -p PORT monitor`, and reboot your board to see if there are any output logs.
-    * The baud rate for downloading is too high: lower your baud rate in the `menuconfig` menu, and try again.
+3. 编译和烧录
+   - 使用ESP-IDF工具链编译项目
+   - 将编译生成的固件烧录到ESP32开发板
 
-## Technical support and feedback
+## 技术支持
 
-Please use the following feedback channels:
+如有技术问题，请通过以下方式获取支持：
 
-* For technical queries, go to the [esp32.com](https://esp32.com/) forum
-* For a feature request or bug report, create a [GitHub issue](https://github.com/espressif/esp-idf/issues)
+- 在GitHub项目Issues页面提交问题
+- 访问[ESP32官方论坛](https://esp32.com/)
+- 参考[ESP-IDF编程指南](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/)
 
-We will get back to you as soon as possible.
+## 许可证
+
+本项目采用MIT许可证，详见LICENSE文件。
